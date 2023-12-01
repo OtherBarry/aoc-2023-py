@@ -2,26 +2,29 @@ from solutions.base import BaseSolution
 
 
 class Solution(BaseSolution):
-    STRING_DIGIT_MAP = {
-        "one": "1",
-        "two": "2",
-        "three": "3",
-        "four": "4",
-        "five": "5",
-        "six": "6",
-        "seven": "7",
-        "eight": "8",
-        "nine": "9",
+    DICT_TRIE = {
+        "o": {"n": {"e": "1"}},
+        "t": {
+            "w": {"o": "2"},
+            "h": {"r": {"e": {"e": "3"}}}
+        },
+        "f": {
+            "o": {"u": {"r": "4"}},
+            "i": {"v": {"e": "5"}}
+        },
+        "s": {
+            "i": {"x": "6"},
+            "e": {"v": {"e": {"n": "7"}}}
+        },
+        "e": {"i": {"g": {"h": {"t": "8"}}}},
+        "n": {"i": {"n": {"e": "9"}}}
     }
 
     @classmethod
-    def extract_digit(
-        cls, line: str, include_words: bool = False, reverse: bool = False
-    ) -> str:
-        """Extract the first digit from a string, or the last if reverse is True
+    def extract_digit(cls, line: str, reverse: bool = False) -> str:
+        """Extract the first (or last) digit from a string
 
         :param line: The string to extract the digit from
-        :param include_words: Whether to allow digits as words (e.g. "one" -> "1")
         :param reverse: Whether to extract the last digit instead of the first
         :return: The first (or last) digit in the string
         """
@@ -29,10 +32,34 @@ class Solution(BaseSolution):
         for i in range_:
             if line[i].isdigit():
                 return line[i]
-            if include_words:
-                for word, digit in cls.STRING_DIGIT_MAP.items():
-                    if line[i:].startswith(word):
-                        return digit
+        msg = "No digit found"
+        raise ValueError(msg)
+
+    @classmethod
+    def extract_digit_with_words(cls, line: str, reverse: bool = False) -> str:
+        """Extract the first (or last) digit from a string,
+        including digits as words (e.g. "one" -> "1")
+
+        :param line: The string to extract the digit from
+        :param reverse: Whether to extract the last digit instead of the first
+        :return: The first (or last) digit in the string
+        """
+        range_ = range(len(line) - 1, -1, -1) if reverse else range(len(line))
+        for i in range_:
+            if line[i].isdigit():
+                return line[i]
+            n = 0
+            node = cls.DICT_TRIE
+            while True:
+                try:
+                    node = node[line[i + n]]
+                except (KeyError, IndexError):
+                    break
+                else:
+                    if isinstance(node, str):
+                        return node
+                n += 1
+
         msg = "No digit found"
         raise ValueError(msg)
 
@@ -44,8 +71,9 @@ class Solution(BaseSolution):
         :param include_words: Whether to allow digits as words (e.g. "one" -> "1")
         :return: The calibration value of the string
         """
-        first = cls.extract_digit(line, include_words=include_words)
-        last = cls.extract_digit(line, include_words=include_words, reverse=True)
+        func = cls.extract_digit_with_words if include_words else cls.extract_digit
+        first = func(line)
+        last = func(line, reverse=True)
         return int(first + last)
 
     def setup(self) -> None:

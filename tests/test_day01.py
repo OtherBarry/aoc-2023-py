@@ -1,6 +1,6 @@
 import pytest
 
-from solutions.day01 import extract_digits, extract_digits_and_digits_as_words
+from solutions.day01 import Solution
 
 
 @pytest.mark.parametrize(
@@ -8,7 +8,7 @@ from solutions.day01 import extract_digits, extract_digits_and_digits_as_words
     [("1abc2", 12), ("pqr3stu8vwx", 38), ("a1b2c3d4e5f", 15), ("treb7uchet", 77)],
 )
 def test_extract_digits(line: str, expected: int) -> None:
-    assert extract_digits(line) == expected
+    assert Solution.calculate_calibration_value(line, include_words=False) == expected
 
 
 @pytest.mark.parametrize(
@@ -25,5 +25,5 @@ def test_extract_digits(line: str, expected: int) -> None:
         ("trknlxnv43zxlrqjtwonect", 41),
     ],
 )
-def test_extract_digits_and_digits_as_words(line: str, expected: int) -> None:
-    assert extract_digits_and_digits_as_words(line) == expected
+def test_extract_digits_including_digits_as_words(line: str, expected: int) -> None:
+    assert Solution.calculate_calibration_value(line, include_words=True) == expected

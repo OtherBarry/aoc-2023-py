@@ -40,3 +40,6 @@ skip-magic-trailing-comma = true
 [tool.ruff.isort]
 known-first-party = ["solutions"]
 split-on-trailing-comma = false
+
+[tool.ruff.per-file-ignores]
+"**/test_*.py" = ["S101"]

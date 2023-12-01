@@ -1,0 +1,42 @@
+[tool.mypy]
+python_version = "3.11"
+strict = true
+ignore_missing_imports = true
+disallow_subclassing_any = false
+show_error_codes = true
+exclude = ["venv"]
+
+[tool.ruff]
+select = ["ALL"]
+ignore = [
+    # conflict with other rules
+    "D211",
+    "D213",
+    # unsupported by formatter
+    "COM812",
+    "E501",
+    "ISC001",
+    # manually disabled
+    "A003",
+    "ANN101",
+    "ANN102",
+    "ANN401",
+    "D",
+    "FBT001",
+    "FBT002",
+    "RUF012",
+    "TD002",
+    "TD003",
+    "T201",
+]
+target-version = "py311"
+
+[tool.ruff.format]
+indent-style = "space"
+line-ending = "auto"
+quote-style = "double"
+skip-magic-trailing-comma = true
+
+[tool.ruff.isort]
+known-first-party = ["solutions"]
+split-on-trailing-comma = false

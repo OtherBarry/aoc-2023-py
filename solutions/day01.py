@@ -4,20 +4,11 @@ from solutions.base import BaseSolution
 class Solution(BaseSolution):
     DICT_TRIE = {
         "o": {"n": {"e": "1"}},
-        "t": {
-            "w": {"o": "2"},
-            "h": {"r": {"e": {"e": "3"}}}
-        },
-        "f": {
-            "o": {"u": {"r": "4"}},
-            "i": {"v": {"e": "5"}}
-        },
-        "s": {
-            "i": {"x": "6"},
-            "e": {"v": {"e": {"n": "7"}}}
-        },
+        "t": {"w": {"o": "2"}, "h": {"r": {"e": {"e": "3"}}}},
+        "f": {"o": {"u": {"r": "4"}}, "i": {"v": {"e": "5"}}},
+        "s": {"i": {"x": "6"}, "e": {"v": {"e": {"n": "7"}}}},
         "e": {"i": {"g": {"h": {"t": "8"}}}},
-        "n": {"i": {"n": {"e": "9"}}}
+        "n": {"i": {"n": {"e": "9"}}},
     }
 
     @classmethod
@@ -52,7 +43,7 @@ class Solution(BaseSolution):
             node = cls.DICT_TRIE
             while True:
                 try:
-                    node = node[line[i + n]]
+                    node = node[line[i + n]]  # type: ignore[assignment]
                 except (KeyError, IndexError):
                     break
                 else:

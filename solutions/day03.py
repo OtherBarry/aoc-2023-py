@@ -1,5 +1,7 @@
 from collections.abc import Generator
 
+import networkx as nx
+
 from solutions.base import BaseSolution
 
 
@@ -61,38 +63,59 @@ def generate_symbol_positions(
 
 class Solution(BaseSolution):
     def setup(self) -> None:
-        self.input = [list(line) for line in self.raw_input.splitlines()]
+        grid_input = [list(line) for line in self.raw_input.splitlines()]
+        graph = nx.Graph()
+        for i in range(len(grid_input)):
+            for j in range(len(grid_input[i])):
+                value = grid_input[i][j]
+                if value == ".":
+                    continue
+                graph.add_node((i, j), value=value)
+
+        for i, j in graph.nodes:
+            for m, n in generate_neighbours(i, j):
+                if (m, n) not in graph.nodes:
+                    continue
+                graph.add_edge((i, j), (m, n))
+
+        combined_nodes = set()
+        for i, j in list(graph.nodes):
+            if grid_input[i][j].isdigit() and (i, j) not in combined_nodes:
+                new_value, node_set = get_full_number_from_position_in_line(
+                    grid_input[i], j
+                )
+                node_list = [(i, n) for n in node_set]
+                for joinee in node_list[1:]:
+                    nx.contracted_nodes(
+                        graph, node_list[0], joinee, self_loops=False, copy=False
+                    )
+                graph.nodes[node_list[0]]["value"] = str(new_value)
+                combined_nodes.update(node_list)
+        self.graph = graph
 
     def part_1(self) -> int:
-        checked_digits: set[tuple[int, int]] = set()
-        numbers = []
-        for i, j in generate_symbol_positions(self.input):
-            for m, n in generate_neighbours(i, j):
-                if self.input[m][n].isdigit():
-                    if (m, n) in checked_digits:
-                        continue
-                    number, found_positions = get_full_number_from_position_in_line(
-                        self.input[m], n
-                    )
-                    numbers.append(number)
-                    checked_digits.update((m, p) for p in found_positions)
-        return sum(numbers)
+        part_number_sum = 0
+        for coords, data in self.graph.nodes.items():
+            node_value = data["value"]
+            if node_value.isdigit():
+                for n in self.graph.neighbors(coords):
+                    if not self.graph.nodes[n]["value"].isdigit():
+                        part_number_sum += int(node_value)
+                        break
+        return part_number_sum
 
     def part_2(self) -> int:
-        gear_ratios = []
-        for i, j in generate_symbol_positions(self.input):
-            if self.input[i][j] == "*":
-                checked_digits: set[tuple[int, int]] = set()
-                numbers = []
-                for m, n in generate_neighbours(i, j):
-                    if self.input[m][n].isdigit():
-                        if (m, n) in checked_digits:
-                            continue
-                        number, found_positions = get_full_number_from_position_in_line(
-                            self.input[m], n
-                        )
-                        numbers.append(number)
-                        checked_digits.update((m, p) for p in found_positions)
-                if len(numbers) == 2:  # Only 2 numbers in a gear ratio  # noqa: PLR2004
-                    gear_ratios.append(numbers[0] * numbers[1])
-        return sum(gear_ratios)
+        gear_ratio_sum = 0
+        for coords, data in self.graph.nodes.items():
+            if data["value"] == "*":
+                neighbours = []
+                for n in self.graph.neighbors(coords):
+                    n_value = self.graph.nodes[n]["value"]
+                    if n_value.isdigit():
+                        neighbours.append(n_value)
+                    if len(neighbours) > 2:
+                        break
+                else:
+                    if len(neighbours) == 2:
+                        gear_ratio_sum += int(neighbours[0]) * int(neighbours[1])
+        return gear_ratio_sum

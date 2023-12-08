@@ -33,16 +33,6 @@ class Node:
         self._right = node
 
 
-class Tree:
-    def __init__(self) -> None:
-        self.nodes: dict[str, Node] = {}
-
-    def add_node(self, node_id: str, left_id: str, right_id: str) -> None:
-        node = self.nodes.setdefault(node_id, Node(node_id))
-        node.left = self.nodes.setdefault(left_id, Node(left_id))
-        node.right = self.nodes.setdefault(right_id, Node(right_id))
-
-
 def calculate_number_of_moves(
     start: Node, moves: str, is_end_node: Callable[[str], bool]
 ) -> int:

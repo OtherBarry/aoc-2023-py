@@ -93,6 +93,6 @@ class Solution(BaseSolution):
                         )
                         numbers.append(number)
                         checked_digits.update((m, p) for p in found_positions)
-                if len(numbers) == 2:  # Only 2 numbers in a gear ratio  # noqa: PLR2004
+                if len(numbers) == 2:  # Only 2 numbers in a gear ratio
                     gear_ratios.append(numbers[0] * numbers[1])
         return sum(gear_ratios)

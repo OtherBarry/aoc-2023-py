@@ -15,7 +15,7 @@ class HandType(int, Enum):
     FIVE_OF_A_KIND = 7
 
     @classmethod
-    def from_hand_frequencies(cls, frequencies: list[int]) -> "HandType":
+    def from_hand_frequencies(cls, frequencies: list[int]) -> "HandType":  # noqa: PLR0911
         if 5 in frequencies:
             return cls.FIVE_OF_A_KIND
         if 4 in frequencies:

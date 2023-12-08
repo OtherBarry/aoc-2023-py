@@ -1,4 +1,5 @@
 import bisect
+import itertools
 from multiprocessing import Pool
 
 from solutions.base import BaseSolution
@@ -75,14 +76,46 @@ class Solution(BaseSolution):
             seed = range_map.convert_value(seed)
         return seed
 
-    def seed_range_to_location(self, range_: tuple[int, int]) -> int:
-        start, length = range_
-        return min(self.seed_to_location(seed) for seed in range(start, start + length))
+    def closest_seed(self, seeds: list[int]) -> int:
+        return min(self.seed_to_location(seed) for seed in seeds)
+
+    def closest_seed_from_ranges(self, ranges: list[tuple[int, int]]) -> int:
+        return min(
+            min(self.seed_to_location(s) for s in range(start, start + length))
+            for start, length in ranges
+        )
 
     def part_1(self) -> int:
-        return min(self.seed_to_location(seed) for seed in self.seeds)
+        return self.closest_seed(self.seeds)
 
     def part_2(self) -> int:
-        seed_ranges = zip(self.seeds[::2], self.seeds[1::2], strict=True)
+        ranges = list(zip(self.seeds[::2], self.seeds[1::2], strict=True))
+        size = sum(length for start, length in ranges)
+        chunk_size = (size // 20) + 1
+        print("Total seeds", size, "chunk_size", chunk_size)
+        range_iter = iter(ranges)
+
+        chunks = []
+        # split ranges (in form (start, length)) into 20 sets of ranges with a cumulative size of chunk_size
+        for _ in range(20):
+            chunk = []
+            chunk_size_left = chunk_size
+            while chunk_size_left > 0:
+                try:
+                    start, length = next(range_iter)
+                except StopIteration:
+                    break
+                if length > chunk_size_left:
+                    chunk.append((start, chunk_size_left))
+                    range_iter = itertools.chain(
+                        [(start, length - chunk_size_left)], range_iter
+                    )
+                    chunk_size_left = 0
+                else:
+                    chunk.append((start, length))
+                    chunk_size_left -= length
+            chunks.append(chunk)
+        print(chunks)
+
         with Pool(20) as pool:
-            return min(pool.imap(self.seed_range_to_location, seed_ranges))
+            return min(pool.imap(self.closest_seed_from_ranges, chunks))

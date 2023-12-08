@@ -61,9 +61,10 @@ class Solution(BaseSolution):
         )
 
     def part_2(self) -> int:
-        current_nodes = [node for node in self.nodes.values() if node.value[-1] == "A"]
-        move_numbers = [
-            calculate_number_of_moves(node, self.moves, lambda x: x[-1] == "Z")
-            for node in current_nodes
-        ]
-        return lcm(*move_numbers)
+        return lcm(
+            *[
+                calculate_number_of_moves(node, self.moves, lambda x: x[-1] == "Z")
+                for value, node in self.nodes.items()
+                if value[-1] == "A"
+            ]
+        )

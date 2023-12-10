@@ -1,6 +1,7 @@
 import pytest
 
 from solutions.day09 import predict_next_value, predict_previous_value
+from tests.utils import assert_solution_part_returns_expected
 
 
 @pytest.mark.parametrize(
@@ -25,3 +26,11 @@ def test_predict_next_value(history: list[int], next_value: int) -> None:
 )
 def test_predict_previous_value(history: list[int], previous_value: int) -> None:
     assert predict_previous_value(history) == previous_value
+
+
+def test_part_1() -> None:
+    assert_solution_part_returns_expected(9, 1, 1681758908)
+
+
+def test_part_2() -> None:
+    assert_solution_part_returns_expected(9, 2, 803)

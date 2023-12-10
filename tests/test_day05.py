@@ -1,4 +1,5 @@
 from solutions.day05 import build_map
+from tests.utils import assert_solution_part_returns_expected
 
 
 def test_build_map() -> None:
@@ -16,7 +17,7 @@ def test_build_map() -> None:
         assert range_map.convert_value(seed) == soil
 
 
-def test_part_1() -> None:
+def test_part_1_with_sample_data() -> None:
     """
     seed-to-soil map:
     50 98 2
@@ -64,3 +65,11 @@ def test_part_1() -> None:
         for range_map in maps:
             current = range_map.convert_value(current)
         assert current == expected
+
+
+def test_part_1() -> None:
+    assert_solution_part_returns_expected(5, 1, 265018614)
+
+
+def test_part_2() -> None:
+    pass  # too slow

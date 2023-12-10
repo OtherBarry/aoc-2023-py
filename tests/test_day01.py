@@ -1,6 +1,7 @@
 import pytest
 
 from solutions.day01 import Solution
+from tests.utils import assert_solution_part_returns_expected
 
 
 @pytest.mark.parametrize(
@@ -27,3 +28,11 @@ def test_extract_digits(line: str, expected: int) -> None:
 )
 def test_extract_digits_including_digits_as_words(line: str, expected: int) -> None:
     assert Solution.calculate_calibration_value(line, include_words=True) == expected
+
+
+def test_part_1() -> None:
+    assert_solution_part_returns_expected(1, 1, 56049)
+
+
+def test_part_2() -> None:
+    assert_solution_part_returns_expected(1, 2, 54530)

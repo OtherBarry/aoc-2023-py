@@ -1,6 +1,7 @@
 import pytest
 
 from solutions.day07 import Hand, HandType, Part2Hand, calculate_bid_total
+from tests.utils import assert_solution_part_returns_expected
 
 
 @pytest.mark.parametrize(
@@ -46,3 +47,11 @@ def test_calculate_bid_total() -> None:
 )
 def test_part_2_hand_types(hand: str, hand_type: HandType) -> None:
     assert Part2Hand(hand).hand_type == hand_type
+
+
+def test_part_1() -> None:
+    assert_solution_part_returns_expected(7, 1, 249390788)
+
+
+def test_part_2() -> None:
+    assert_solution_part_returns_expected(7, 2, 248750248)

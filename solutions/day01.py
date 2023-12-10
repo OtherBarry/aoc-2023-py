@@ -71,15 +71,13 @@ class Solution(BaseSolution):
         self.lines = self.raw_input.splitlines()
 
     def part_1(self) -> int:
-        calibration_values = [
+        return sum(
             self.calculate_calibration_value(line, include_words=False)
             for line in self.lines
-        ]
-        return sum(calibration_values)
+        )
 
     def part_2(self) -> int:
-        calibration_values = [
+        return sum(
             self.calculate_calibration_value(line, include_words=True)
             for line in self.lines
-        ]
-        return sum(calibration_values)
+        )

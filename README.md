@@ -5,6 +5,7 @@ This repository contains solutions for Advent of Code 2023 in Python.
 ## Prerequisites
 
 - Python 3.11 or higher
+- Requirements listed in `requirements.txt`
 
 ## Running the Solutions
 

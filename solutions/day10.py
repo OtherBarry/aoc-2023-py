@@ -5,7 +5,7 @@ from solutions.base import BaseSolution
 Coord = tuple[int, int]
 
 
-def generate_valid_connections(node: Coord, pipe_type: str) -> list[Coord]:
+def generate_valid_connections(node: Coord, pipe_type: str) -> list[Coord]:  # noqa: PLR0911
     """Generate the valid connections for a node.
 
     :param node: The node to generate connections for.
@@ -56,7 +56,7 @@ def node_is_even(node: Coord) -> bool:
 
 
 class Solution(BaseSolution):
-    def setup(self) -> None:
+    def setup(self) -> None:  # noqa: C901
         lines = self.raw_input.splitlines()
         self.height = len(lines)
         self.width = len(lines[0])

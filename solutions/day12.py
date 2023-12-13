@@ -37,12 +37,12 @@ def num_valid_combinations(row: str, groups: tuple[int, ...]) -> int:
             # group doesn't fit
             return 0
 
-        # try:
-        if row[group] == "#":
-            # group is too big
-            return 0
-        # except IndexError:
-        #     pass
+        try:
+            if row[group] == "#":
+                # group is too big
+                return 0
+        except IndexError:
+            pass
 
         # continue with next group
         return num_valid_combinations(row[group + 1 :], tuple(remaining_groups))

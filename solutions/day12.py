@@ -4,7 +4,7 @@ from solutions.base import BaseSolution
 
 
 @cache
-def num_valid_combinations(row: str, groups: tuple[int, ...]) -> int:
+def num_valid_combinations(row: str, groups: tuple[int, ...]) -> int:  # noqa: C901,PLR0911
     """
     Basically stolen from https://gist.github.com/Nathan-Fenner/781285b77244f06cf3248a04869e7161
     """

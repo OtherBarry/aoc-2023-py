@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from solutions.day14 import Mirror, run_cycles, tilt_row
+from solutions.day14 import Mirror, tilt_row
 
 
 @pytest.mark.parametrize(
@@ -65,6 +65,4 @@ def test_mirror_cycle_triple() -> None:
 def test_run_cycles() -> None:
     raw_mirror = "O....#....\nO.OO#....#\n.....##...\nOO.#O....O\n.O.....O#.\nO.#..O.#.#\n..O..#O..O\n.......O..\n#....###..\n#OO..#...."
     mirror = Mirror.from_str(raw_mirror)
-    n_iters = 1000000000
-    final_mirror = run_cycles(n_iters, mirror)
-    assert final_mirror.rotate().calculate_load() == 64
+    assert mirror.run_cycles(1_000_000_000).rotate().calculate_load() == 64

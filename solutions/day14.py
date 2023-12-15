@@ -47,6 +47,22 @@ class Mirror:
     def cycle(self) -> "Mirror":
         return self.tilt().tilt().tilt().tilt()
 
+    def run_cycles(self, n_iters: int) -> "Mirror":
+        mirror = self
+        history = {mirror: 0}
+        for i in range(1, n_iters + 1):
+            mirror = mirror.cycle()
+            if mirror in history:
+                start = history[mirror]
+                remaining_iters = n_iters - i
+                cycle_length = i - start
+                future_iters = remaining_iters % cycle_length
+                for _ in range(future_iters):
+                    mirror = mirror.cycle()
+                return mirror
+            history[mirror] = i
+        return mirror
+
     def calculate_load(self) -> int:
         return sum(
             sum(len(col) - i for i, char in enumerate(col) if char == "O")
@@ -65,22 +81,6 @@ class Mirror:
         return other.matches(self._mirror)
 
 
-def run_cycles(n_iters: int, mirror: Mirror) -> Mirror:
-    history = {mirror: 0}
-    for i in range(1, n_iters + 1):
-        mirror = mirror.cycle()
-        if mirror in history:
-            start = history[mirror]
-            remaining_iters = n_iters - i
-            cycle_length = i - start
-            future_iters = remaining_iters % cycle_length
-            for _ in range(future_iters):
-                mirror = mirror.cycle()
-            return mirror
-        history[mirror] = i
-    return mirror
-
-
 class Solution(BaseSolution):
     def setup(self) -> None:
         self.mirror = Mirror.from_str(self.raw_input)
@@ -89,6 +89,4 @@ class Solution(BaseSolution):
         return self.mirror.tilt().calculate_load()
 
     def part_2(self) -> int:
-        n_iters = 1000000000
-        final_mirror = run_cycles(n_iters, self.mirror)
-        return final_mirror.rotate().calculate_load()
+        return self.mirror.run_cycles(1_000_000_000).rotate().calculate_load()

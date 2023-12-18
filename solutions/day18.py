@@ -1,8 +1,7 @@
 from collections.abc import Iterable
 from enum import Enum
 
-import numpy as np
-import numpy.typing as npt
+from shapely import Polygon
 
 from solutions.base import BaseSolution
 
@@ -13,8 +12,8 @@ class Direction(Enum):
     UP = (-1, 0)
     DOWN = (1, 0)
 
-    def apply(self, pos: tuple[int, int]) -> tuple[int, int]:
-        return pos[0] + self.value[0], pos[1] + self.value[1]
+    def apply(self, pos: tuple[int, int], distance: int = 1) -> tuple[int, int]:
+        return pos[0] + (self.value[0] * distance), pos[1] + (self.value[1] * distance)
 
 
 DIR_LETTER_MAP = {
@@ -34,29 +33,15 @@ DIR_DIGIT_MAP = {
 
 def calculate_area(data: Iterable[tuple[Direction, int]]) -> int:
     current = (0, 0)
-    x_values = [0]
-    y_values = [0]
-    visited = {current}
+    points = [current]
     for direction, distance in data:
-        for _ in range(distance):
-            current = direction.apply(current)
-            visited.add(current)
-        x_values.append(current[0])
-        y_values.append(current[1])
+        current = direction.apply(current, distance)
+        points.append(current)
 
-    # Pick's theorem
-    area = shoelace_theorem_area(np.array(x_values), np.array(y_values))
-    boundary_points = len(visited)
-    interior_points = area + 1 - boundary_points // 2
-    return int(interior_points + boundary_points)
+    polygon = Polygon(points)
 
-
-def shoelace_theorem_area(x: npt.NDArray[int], y: npt.NDArray[int]) -> float:  # type: ignore[type-var]
-    x_ = x - x.mean()
-    y_ = y - y.mean()
-    correction = x_[-1] * y_[0] - y_[-1] * x_[0]
-    main_area = np.dot(x_[:-1], y_[1:]) - np.dot(y_[:-1], x_[1:])
-    return 0.5 * np.abs(main_area + correction)  # type: ignore[no-any-return]
+    # not clear on why this formula is needed, but it works
+    return int(polygon.area + (polygon.length // 2) + 1)
 
 
 def parse_hex(hex_code: str) -> tuple[Direction, int]:

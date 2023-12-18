@@ -40,7 +40,7 @@ def calculate_area(data: Iterable[tuple[Direction, int]]) -> int:
 
     polygon = Polygon(points)
 
-    # not clear on why this formula is needed, but it works
+    # Calculating grid points, not area
     return int(polygon.area + (polygon.length // 2) + 1)
 
 

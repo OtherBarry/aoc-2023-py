@@ -1,6 +1,5 @@
-import operator
 import re
-from functools import reduce
+from math import prod
 
 from solutions.base import BaseSolution
 
@@ -31,4 +30,4 @@ class Solution(BaseSolution):
         return sum(valid_games)
 
     def part_2(self) -> int:
-        return sum(reduce(operator.mul, game.values()) for game in self.games.values())
+        return sum(prod(game.values()) for game in self.games.values())

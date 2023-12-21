@@ -4,6 +4,8 @@ from math import prod
 
 from solutions.base import BaseSolution
 
+InclusiveRange = tuple[int, int]
+
 
 @dataclass
 class Part:
@@ -47,8 +49,8 @@ class Operation:
         )
 
     def split_range(
-        self, range_: tuple[int, int]
-    ) -> tuple[tuple[int, int] | None, tuple[int, int] | None]:
+        self, range_: InclusiveRange
+    ) -> tuple[InclusiveRange | None, InclusiveRange | None]:
         """Split a range into two ranges, one that passes the operation and one that fails it.
 
         :param range_: The range to split
@@ -107,7 +109,7 @@ class FilterSet:
         return result == "A"
 
     def _calculate_possibilities(
-        self, filter_name: str, ranges: dict[str, tuple[int, int]]
+        self, filter_name: str, ranges: dict[str, InclusiveRange]
     ) -> int:
         if filter_name == "A":
             return prod((max_ - min_) + 1 for min_, max_ in ranges.values())

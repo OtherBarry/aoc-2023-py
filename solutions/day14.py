@@ -74,7 +74,7 @@ class Mirror:
         return np.array_equal(self._mirror, other)
 
     def __hash__(self) -> int:
-        return hash(self._mirror.tostring())  # type: ignore[attr-defined]
+        return hash(self._mirror.tobytes())
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Mirror):

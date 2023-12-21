@@ -7,30 +7,8 @@ from solutions.base import BaseSolution
 class Node:
     def __init__(self, value: str) -> None:
         self.value = value
-        self._left: Node | None = None
-        self._right: Node | None = None
-
-    @property
-    def left(self) -> "Node":
-        if self._left is None:
-            msg = "Node has no left node"
-            raise ValueError(msg)
-        return self._left
-
-    @left.setter
-    def left(self, node: "Node") -> None:
-        self._left = node
-
-    @property
-    def right(self) -> "Node":
-        if self._right is None:
-            msg = "Node has no right node"
-            raise ValueError(msg)
-        return self._right
-
-    @right.setter
-    def right(self, node: "Node") -> None:
-        self._right = node
+        self.left: Node | None = None
+        self.right: Node | None = None
 
 
 def calculate_number_of_moves(
@@ -40,7 +18,7 @@ def calculate_number_of_moves(
     move_count = 0
     while not is_end_node(current.value):
         next_move = moves[move_count % len(moves)]
-        current = current.left if next_move == "L" else current.right
+        current = current.left if next_move == "L" else current.right  # type: ignore[assignment]
         move_count += 1
     return move_count
 
@@ -62,9 +40,9 @@ class Solution(BaseSolution):
 
     def part_2(self) -> int:
         return lcm(
-            *[
+            *(
                 calculate_number_of_moves(node, self.moves, lambda x: x[-1] == "Z")
                 for value, node in self.nodes.items()
                 if value[-1] == "A"
-            ]
+            )
         )

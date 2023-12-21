@@ -4,6 +4,7 @@ import numpy as np
 import numpy.typing as npt
 
 from solutions.base import BaseSolution
+from solutions.utilities.grid import input_to_char_grid
 
 
 def tilt_row(row: MutableSequence[str]) -> None:
@@ -29,7 +30,7 @@ class Mirror:
 
     @classmethod
     def from_str(cls, s: str) -> "Mirror":
-        mirror = np.array([list(line) for line in s.splitlines()])
+        mirror = np.array(input_to_char_grid(s))
         return cls(np.rot90(mirror, k=2))
 
     def __str__(self) -> str:

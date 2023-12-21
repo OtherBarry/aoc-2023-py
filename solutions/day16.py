@@ -1,16 +1,14 @@
 import sys
-from enum import Enum
 
 import networkx as nx
 
 from solutions.base import BaseSolution
-
-
-class Direction(Enum):
-    RIGHT = (0, 1)
-    LEFT = (0, -1)
-    UP = (-1, 0)
-    DOWN = (1, 0)
+from solutions.utilities.grid import (
+    Coordinate,
+    Direction,
+    coordinate_in_bounds,
+    input_to_char_grid,
+)
 
 
 def char_to_dir(char: str, direction: Direction) -> list[Direction]:  # noqa: PLR0911
@@ -47,23 +45,21 @@ def char_to_dir(char: str, direction: Direction) -> list[Direction]:  # noqa: PL
 
 class Solution(BaseSolution):
     def setup(self) -> None:
-        self.map = [list(row) for row in self.raw_input.splitlines()]
+        self.map = input_to_char_grid(self.raw_input)
         self.height = len(self.map)
         self.width = len(self.map[0])
 
         # this is almost certainly a sign of doing the wrong thing
         sys.setrecursionlimit((self.height * self.width) * 4)
 
-    def count_energised_tiles(
-        self, start_pos: tuple[int, int], start_dir: Direction
-    ) -> int:
+    def count_energised_tiles(self, start_pos: Coordinate, start_dir: Direction) -> int:
         graph = nx.DiGraph()
 
-        def update_graph(pos: tuple[int, int], direction: Direction) -> None:
-            next_pos = (pos[0] + direction.value[0], pos[1] + direction.value[1])
+        def update_graph(pos: Coordinate, direction: Direction) -> None:
+            next_pos = direction.apply(pos)
 
             if graph.has_edge(pos, next_pos) or not (
-                0 <= next_pos[0] < self.height and 0 <= next_pos[1] < self.width
+                coordinate_in_bounds(next_pos, self.height, self.width)
             ):
                 # next pos is out of bounds, or we've already visited it from this pos
                 return

@@ -1,23 +1,7 @@
-from collections.abc import Generator
+from collections.abc import Iterator
 
 from solutions.base import BaseSolution
-
-
-def generate_neighbours(x: int, y: int) -> Generator[tuple[int, int], None, None]:
-    """Generate the neighbours of a coordinate
-
-    :param x: The x coordinate
-    :param y: The y coordinate
-    :return: The neighbours of the coordinate
-    """
-    yield x - 1, y - 1
-    yield x, y - 1
-    yield x + 1, y - 1
-    yield x - 1, y
-    yield x + 1, y
-    yield x - 1, y + 1
-    yield x, y + 1
-    yield x + 1, y + 1
+from solutions.utilities.grid import Coordinate, generate_neighbours, input_to_char_grid
 
 
 def get_full_number_from_position_in_line(
@@ -44,9 +28,7 @@ def get_full_number_from_position_in_line(
     return int("".join(line[start : end + 1])), list(range(start, end + 1))
 
 
-def generate_symbol_positions(
-    grid: list[list[str]]
-) -> Generator[tuple[int, int], None, None]:
+def generate_symbol_positions(grid: list[list[str]]) -> Iterator[Coordinate]:
     """Generate the positions of symbols in a grid
 
     :param grid: The grid
@@ -60,14 +42,16 @@ def generate_symbol_positions(
 
 
 class Solution(BaseSolution):
+    # TODO: Reduce repetition between part 1 and part 2
+
     def setup(self) -> None:
-        self.input = [list(line) for line in self.raw_input.splitlines()]
+        self.input = input_to_char_grid(self.raw_input)
 
     def part_1(self) -> int:
-        checked_digits: set[tuple[int, int]] = set()
+        checked_digits: set[Coordinate] = set()
         numbers = []
         for i, j in generate_symbol_positions(self.input):
-            for m, n in generate_neighbours(i, j):
+            for m, n in generate_neighbours((i, j), diagonal=True):
                 if self.input[m][n].isdigit():
                     if (m, n) in checked_digits:
                         continue
@@ -82,9 +66,9 @@ class Solution(BaseSolution):
         gear_ratios = []
         for i, j in generate_symbol_positions(self.input):
             if self.input[i][j] == "*":
-                checked_digits: set[tuple[int, int]] = set()
+                checked_digits: set[Coordinate] = set()
                 numbers = []
-                for m, n in generate_neighbours(i, j):
+                for m, n in generate_neighbours((i, j), diagonal=True):
                     if self.input[m][n].isdigit():
                         if (m, n) in checked_digits:
                             continue

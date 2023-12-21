@@ -1,6 +1,7 @@
 from itertools import combinations
 
 from solutions.base import BaseSolution
+from solutions.utilities.grid import Coordinate, input_to_char_grid
 
 
 def get_empty_rows_and_columns(map_: list[list[str]]) -> tuple[set[int], set[int]]:
@@ -12,9 +13,7 @@ def get_empty_rows_and_columns(map_: list[list[str]]) -> tuple[set[int], set[int
 
 
 class Solution(BaseSolution):
-    def count_steps(
-        self, start: tuple[int, int], end: tuple[int, int]
-    ) -> tuple[int, int]:
+    def count_steps(self, start: Coordinate, end: Coordinate) -> tuple[int, int]:
         steps = 0
         empty_steps = 0
         for y in range(min(start[0], end[0]), max(start[0], end[0])):
@@ -30,7 +29,7 @@ class Solution(BaseSolution):
         return steps, empty_steps
 
     def setup(self) -> None:
-        base_map = [list(row) for row in self.raw_input.splitlines()]
+        base_map = input_to_char_grid(self.raw_input)
         self.empty_rows, self.empty_columns = get_empty_rows_and_columns(base_map)
 
         self.galaxies = []

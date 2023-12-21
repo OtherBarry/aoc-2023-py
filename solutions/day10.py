@@ -1,51 +1,39 @@
 import networkx as nx
 
 from solutions.base import BaseSolution
+from solutions.utilities.grid import Coordinate, Direction, coordinate_in_bounds
 
-Coord = tuple[int, int]
 
-
-def generate_valid_connections(node: Coord, pipe_type: str) -> list[Coord]:  # noqa: PLR0911
+def generate_valid_connections(node: Coordinate, pipe_type: str) -> list[Coordinate]:  # noqa: PLR0911
     """Generate the valid connections for a node.
 
     :param node: The node to generate connections for.
     :param pipe_type: The type of pipe at the node.
     :returns: A list of valid connections.
     """
-    y, x = node
-    north, east, south, west = (y - 1, x), (y, x + 1), (y + 1, x), (y, x - 1)
     if pipe_type == "|":
-        return [north, south]
+        return [Direction.NORTH.apply(node), Direction.SOUTH.apply(node)]
     if pipe_type == "-":
-        return [east, west]
+        return [Direction.EAST.apply(node), Direction.WEST.apply(node)]
     if pipe_type == "L":
-        return [north, east]
+        return [Direction.NORTH.apply(node), Direction.EAST.apply(node)]
     if pipe_type == "J":
-        return [north, west]
+        return [Direction.NORTH.apply(node), Direction.WEST.apply(node)]
     if pipe_type == "7":
-        return [south, west]
+        return [Direction.SOUTH.apply(node), Direction.WEST.apply(node)]
     if pipe_type == "F":
-        return [south, east]
+        return [Direction.SOUTH.apply(node), Direction.EAST.apply(node)]
     if pipe_type == "S":
-        return [north, south, east, west]
+        return [
+            Direction.NORTH.apply(node),
+            Direction.SOUTH.apply(node),
+            Direction.EAST.apply(node),
+            Direction.WEST.apply(node),
+        ]
     return []
 
 
-def node_in_bounds(node: Coord, y_min: int, y_max: int, x_min: int, x_max: int) -> bool:
-    """Check if a node is in bounds of the given lines.
-
-    :param node: The node to check.
-    :param y_min: The minimum y value.
-    :param y_max: The maximum y value.
-    :param x_min: The minimum x value.
-    :param x_max: The maximum x value.
-    :returns: True if the node is in bounds, False otherwise.
-    """
-    y, x = node
-    return y_min <= y < y_max and x_min <= x < x_max
-
-
-def node_is_even(node: Coord) -> bool:
+def node_is_even(node: Coordinate) -> bool:
     """Check if all coords of a node are even.
 
     :param node: The node to check.
@@ -73,7 +61,7 @@ class Solution(BaseSolution):
                     self.start_node = node
                     continue
                 for con in generate_valid_connections(node, value):
-                    if node_in_bounds(con, 0, self.height, 0, self.width):
+                    if coordinate_in_bounds(con, self.height, self.width):
                         connections_connections = generate_valid_connections(
                             con, lines[con[0]][con[1]]
                         )
@@ -92,7 +80,7 @@ class Solution(BaseSolution):
                     self.ground_graph.remove_node(con)
 
     def part_1(self) -> int:
-        paths: dict[Coord, int] = nx.shortest_path_length(
+        paths: dict[Coordinate, int] = nx.shortest_path_length(
             self.main_loop_graph, self.start_node
         )
         return max(paths.values())
@@ -101,7 +89,9 @@ class Solution(BaseSolution):
         total_contained = 0
         for component in nx.connected_components(self.ground_graph):
             if all(
-                node_in_bounds(n, 1, (self.height * 2) - 1, 1, (self.width * 2) - 1)
+                coordinate_in_bounds(
+                    n, (self.height * 2) - 1, (self.width * 2) - 1, y_min=1, x_min=1
+                )
                 for n in component
             ):
                 total_contained += sum(1 for n in component if node_is_even(n))

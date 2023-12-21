@@ -1,5 +1,3 @@
-from collections.abc import Iterator
-from enum import Enum
 from heapq import heappop, heappush
 from itertools import count
 from typing import Optional
@@ -7,32 +5,15 @@ from typing import Optional
 import networkx as nx
 
 from solutions.base import BaseSolution
+from solutions.utilities.grid import (
+    Coordinate,
+    Direction,
+    coordinate_in_bounds,
+    generate_neighbours,
+    manhattan_distance,
+)
 
-Coord = tuple[int, int]
 Node = tuple[int, int, Optional["Direction"], int]
-
-
-class Direction(Enum):
-    RIGHT = (0, 1)
-    LEFT = (0, -1)
-    UP = (-1, 0)
-    DOWN = (1, 0)
-
-    @classmethod
-    def from_node(cls, node: Coord, next_node: Coord) -> "Direction":
-        return cls((next_node[0] - node[0], next_node[1] - node[1]))
-
-    def is_opposite(self, other: "Direction") -> bool:
-        return self.value[0] == -other.value[0] and self.value[1] == -other.value[1]  # type: ignore[comparison-overlap]
-
-
-def manhattan_distance(a: Coord, b: Coord) -> int:
-    return abs(a[0] - b[0]) + abs(a[1] - b[1])
-
-
-def generate_neighbours(node: Coord) -> Iterator[Coord]:
-    for direction in Direction:
-        yield node[0] + direction.value[0], node[1] + direction.value[1]
 
 
 def sum_path(graph: nx.Graph, path: list[Node]) -> int:
@@ -43,18 +24,19 @@ def create_graph(data: list[str], min_steps: int, max_steps: int) -> nx.Graph:  
     height = len(data)
     width = len(data[0])
 
-    def is_valid(node: Coord) -> bool:
-        return 0 <= node[0] < height and 0 <= node[1] < width
-
     graph = nx.DiGraph()
     for i, row in enumerate(data):
         for j, char in enumerate(row):
             weight = int(char)
-            neighbours = [n for n in generate_neighbours((i, j)) if is_valid(n)]
+            neighbours = [
+                n
+                for n in generate_neighbours((i, j))
+                if coordinate_in_bounds(n, height, width)
+            ]
             if i == 0 and j == 0:
                 graph.add_node((i, j, None, 0), weight=0)
                 for neighbour in neighbours:
-                    start_direction = Direction.from_node((i, j), neighbour)
+                    start_direction = Direction.from_nodes((i, j), neighbour)
                     graph.add_edge(
                         (i, j, None, 0),
                         (neighbour[0], neighbour[1], start_direction, 1),
@@ -63,7 +45,7 @@ def create_graph(data: list[str], min_steps: int, max_steps: int) -> nx.Graph:  
                 for steps in range(1, max_steps + 1):
                     graph.add_node((i, j, direction, steps), weight=weight)
                     for neighbour in neighbours:
-                        neighbour_direction = Direction.from_node((i, j), neighbour)
+                        neighbour_direction = Direction.from_nodes((i, j), neighbour)
                         if neighbour_direction.is_opposite(direction):
                             continue
                         if neighbour_direction != direction:
@@ -85,7 +67,9 @@ def create_graph(data: list[str], min_steps: int, max_steps: int) -> nx.Graph:  
     return graph
 
 
-def astar_path(graph: nx.Graph, source_coord: Coord, target_coord: Coord) -> list[Node]:
+def astar_path(
+    graph: nx.Graph, source_coord: Coordinate, target_coord: Coordinate
+) -> list[Node]:
     """Copied from networkx's A* implementation.
 
     Modified to:

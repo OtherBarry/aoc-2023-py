@@ -1,27 +1,4 @@
-from solutions.day17 import Direction, Node, astar_path, create_graph, sum_path
-
-
-def test_direction_is_opposite() -> None:
-    assert Direction.RIGHT.is_opposite(Direction.LEFT)
-    assert not Direction.RIGHT.is_opposite(Direction.RIGHT)
-    assert not Direction.RIGHT.is_opposite(Direction.UP)
-    assert not Direction.RIGHT.is_opposite(Direction.DOWN)
-
-    assert Direction.LEFT.is_opposite(Direction.RIGHT)
-    assert not Direction.LEFT.is_opposite(Direction.LEFT)
-    assert not Direction.LEFT.is_opposite(Direction.UP)
-    assert not Direction.LEFT.is_opposite(Direction.DOWN)
-
-    assert Direction.UP.is_opposite(Direction.DOWN)
-    assert not Direction.UP.is_opposite(Direction.RIGHT)
-    assert not Direction.UP.is_opposite(Direction.LEFT)
-    assert not Direction.UP.is_opposite(Direction.UP)
-
-    assert Direction.DOWN.is_opposite(Direction.UP)
-    assert not Direction.DOWN.is_opposite(Direction.RIGHT)
-    assert not Direction.DOWN.is_opposite(Direction.LEFT)
-    assert not Direction.DOWN.is_opposite(Direction.DOWN)
-
+from solutions.day17 import Node, astar_path, create_graph, sum_path
 
 example_path = [
     (0, 0),

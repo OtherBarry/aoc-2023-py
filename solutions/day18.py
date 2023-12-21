@@ -1,20 +1,9 @@
 from collections.abc import Iterable
-from enum import Enum
 
 from shapely import Polygon
 
 from solutions.base import BaseSolution
-
-
-class Direction(Enum):
-    LEFT = (0, -1)
-    RIGHT = (0, 1)
-    UP = (-1, 0)
-    DOWN = (1, 0)
-
-    def apply(self, pos: tuple[int, int], distance: int = 1) -> tuple[int, int]:
-        return pos[0] + (self.value[0] * distance), pos[1] + (self.value[1] * distance)
-
+from solutions.utilities.grid import Direction
 
 DIR_LETTER_MAP = {
     "R": Direction.RIGHT,

@@ -42,24 +42,27 @@ def generate_symbol_positions(grid: list[list[str]]) -> Iterator[Coordinate]:
 
 
 class Solution(BaseSolution):
-    # TODO: Reduce repetition between part 1 and part 2
+    def check_neighbours(
+        self, pos: Coordinate, checked_digits: set[Coordinate], numbers: list[int]
+    ) -> None:
+        for m, n in generate_neighbours(pos, diagonal=True):
+            if self.input[m][n].isdigit():
+                if (m, n) in checked_digits:
+                    continue
+                number, found_positions = get_full_number_from_position_in_line(
+                    self.input[m], n
+                )
+                numbers.append(number)
+                checked_digits.update((m, p) for p in found_positions)
 
     def setup(self) -> None:
         self.input = input_to_char_grid(self.raw_input)
 
     def part_1(self) -> int:
         checked_digits: set[Coordinate] = set()
-        numbers = []
-        for i, j in generate_symbol_positions(self.input):
-            for m, n in generate_neighbours((i, j), diagonal=True):
-                if self.input[m][n].isdigit():
-                    if (m, n) in checked_digits:
-                        continue
-                    number, found_positions = get_full_number_from_position_in_line(
-                        self.input[m], n
-                    )
-                    numbers.append(number)
-                    checked_digits.update((m, p) for p in found_positions)
+        numbers: list[int] = []
+        for pos in generate_symbol_positions(self.input):
+            self.check_neighbours(pos, checked_digits, numbers)
         return sum(numbers)
 
     def part_2(self) -> int:
@@ -67,16 +70,8 @@ class Solution(BaseSolution):
         for i, j in generate_symbol_positions(self.input):
             if self.input[i][j] == "*":
                 checked_digits: set[Coordinate] = set()
-                numbers = []
-                for m, n in generate_neighbours((i, j), diagonal=True):
-                    if self.input[m][n].isdigit():
-                        if (m, n) in checked_digits:
-                            continue
-                        number, found_positions = get_full_number_from_position_in_line(
-                            self.input[m], n
-                        )
-                        numbers.append(number)
-                        checked_digits.update((m, p) for p in found_positions)
+                numbers: list[int] = []
+                self.check_neighbours((i, j), checked_digits, numbers)
                 if len(numbers) == 2:  # Only 2 numbers in a gear ratio
                     gear_ratios.append(numbers[0] * numbers[1])
         return sum(gear_ratios)
